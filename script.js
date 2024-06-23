@@ -10,6 +10,7 @@ let hNumberOfVariables = document.getElementById("no-variables");
 let hNumberOfTrials = document.getElementById("no-trials");
 let hInputTable = document.querySelector(".table");
 // graph elements
+let hGraph = document.querySelector(".graph");
 let hCanvas = document.getElementById("canvas");
 let hContext = hCanvas.getContext("2d");
 let hXAxisLabel = document.querySelector(".x-axis-label");
@@ -22,8 +23,9 @@ let ivUnits = "";
 let dvUnits = "";
 let numberOfVariables = 0;
 let numberOfTrials = 0;
-let xIncrements = 0;
-let yIncrements = 0;
+let yIncrement = 0;
+let xDistanceBetween = 0;
+let yDistanceBetween = 0;
 
 let data = []
 
@@ -102,21 +104,56 @@ function drawAxes() {
     // axis labels
     hXAxisLabel.textContent = independentVariable + " (" + ivUnits + ")";
     hYAxisLabel.textContent = dependentVariable + " (" + dvUnits + ")";
-    // calculate scale
+    // MAKE SCALE
+    // delete preexisting scale labels
+    xScaleLabels = document.querySelectorAll(".x-axis-scale-label");
+    yScaleLabels = document.querySelectorAll(".y-axis-scale-label");
+    for (let element of xScaleLabels) element.remove();
+    for (let element of yScaleLabels) element.remove();
+    // get max value
     mxY = 0;
     for (let i = 0; i < numberOfVariables; i++) {
         mxY = Math.max(mxY, ...data[i][1]);
     }
-    yIncrements = mxY / 10;
+    // calculate increment
+    yIncrement = mxY / 10;
     let l = 0, r = yummyNumbers.length;
     while (l != r - 1) {
         let m = Math.floor((l + r) / 2);
-        if (yummyNumbers[m] <= yIncrements) l = m;
+        if (yummyNumbers[m] <= yIncrement) l = m;
         else r = m;
     }
-    yIncrements = yummyNumbers[l];
-
-    console.log(yIncrements);
+    // get y num and distance between
+    let numY = Math.ceil(mxY / yIncrement);
+    yIncrement = yummyNumbers[l];
+    yDistanceBetween = 480 / numY;
+    // draw y-axis scale
+    for (let i = 0; i <= numY; i++) {
+        let y = 600 - yDistanceBetween * i;
+        hContext.moveTo(95, y);
+        hContext.lineTo(100, y);
+        hContext.stroke();
+        let scaleLabel = document.createElement("div");
+        scaleLabel.classList.add("y-axis-scale-label");
+        scaleLabel.textContent = (yIncrement * i).toString();
+        scaleLabel.style.top = (y + 3).toString() + "px";
+        hGraph.appendChild(scaleLabel);
+    }
+    // get x distance between
+    xDistanceBetween = Math.ceil(750 / numberOfVariables);
+    // draw x-axis scale
+    for (let i = 0; i <= numberOfVariables; i++) {
+        let x = 100 + xDistanceBetween * i;
+        hContext.moveTo(x, 600);
+        hContext.lineTo(x, 605);
+        hContext.stroke();
+        let scaleLabel = document.createElement("div");
+        scaleLabel.classList.add("x-axis-scale-label");
+        if (i == 0) scaleLabel.textContent = "0";
+        else scaleLabel.textContent = data[i - 1][0].toString();
+        scaleLabel.style.left = (x).toString() + "px";
+        hGraph.appendChild(scaleLabel);
+    }
 }
 
 function drawPoints() {
