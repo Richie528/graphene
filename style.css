@@ -32,6 +32,12 @@ body {
     color: var(--c-text);
 }
 
+.run-button {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
 .main {
     position: relative;
     width: 1500px; 

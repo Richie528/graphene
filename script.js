@@ -1,5 +1,5 @@
-let graphColours = ["#000000", "#000000", "#000000", "#000000", "#000000"];
-let yummyNumbers = [0.001, 0.05, 0.01, 0.5, 0.1, 1, 2, 3, 4, 5, 10, 20, 25, 50, 75, 100, 150, 200, 250, 300, 500, 1000];
+let graphColours = ["#df8e1d", "#04a5e5", "#40a02b", "#e64553", "#1e66f5"];
+let yummyNumbers = [0.001, 0.05, 0.01, 0.5, 0.1, 1, 2, 3, 4, 5, 6, 8, 10, 12, 15, 20, 25, 50, 75, 100, 150, 200, 250, 300, 500, 1000];
 
 // input elements
 let hIvInput = document.getElementById("iv");
@@ -9,6 +9,7 @@ let hDvUnitsInput = document.getElementById("dv-units");
 let hNumberOfVariables = document.getElementById("no-variables");
 let hNumberOfTrials = document.getElementById("no-trials");
 let hInputTable = document.querySelector(".table");
+let hRunButton = document.getElementById("run");
 // graph elements
 let hGraph = document.querySelector(".graph");
 let hCanvas = document.getElementById("canvas");
@@ -94,6 +95,7 @@ function readTable() {
 function drawAxes() {
     readTable();
     hContext.lineWidth = 1;
+    hContext.strokeStyle = "var(--c-text)";
     // y axis
     hContext.moveTo(100, 100);
     hContext.lineTo(100, 600);
@@ -120,12 +122,12 @@ function drawAxes() {
     let l = 0, r = yummyNumbers.length;
     while (l != r - 1) {
         let m = Math.floor((l + r) / 2);
-        if (yummyNumbers[m] <= yIncrement) l = m;
+        if (yummyNumbers[m] < yIncrement) l = m;
         else r = m;
     }
     // get y num and distance between
     let numY = Math.ceil(mxY / yIncrement);
-    yIncrement = yummyNumbers[l];
+    yIncrement = yummyNumbers[r];
     yDistanceBetween = 480 / numY;
     // draw y-axis scale
     for (let i = 0; i <= numY; i++) {
@@ -158,31 +160,34 @@ function drawAxes() {
 
 function drawPoints() {
     for (let i = 0; i < numberOfVariables; i++) {
+        x = 100 + xDistanceBetween * (i + 1);
         for (let j = 0; j < numberOfTrials; j++) {
-
+            console.log(data[i][1][j]);
+            console.log(yIncrement);
+            console.log(yDistanceBetween);
+            console.log(data[i][1][j] / yIncrement * yDistanceBetween);
+            y = 600 - data[i][1][j] / yIncrement * yDistanceBetween;
+            hContext.fillStyle = graphColours[j];
+            hContext.fillRect(x - 2, y - 2, 4, 4);
         }
     }
 }
 
-function readAndDraw() {
-    readInput();
-    drawAxes();
-}
-
-hIvInput.onkeyup = function() {readAndDraw()};
-hDvInput.onkeyup = function() {readAndDraw()};
-hIvUnitsInput.onkeyup = function() {readAndDraw()};
-hDvUnitsInput.onkeyup = function() {readAndDraw()};
-
 hNumberOfVariables.onkeyup = function() {
+    readInput();
     createTable();
-    readAndDraw();
 }
 hNumberOfTrials.onkeyup = function() {
+    readInput();
     createTable();
-    readAndDraw();
+}
+
+hRunButton.onclick = function() {
+    readTable();
+    console.table(data);
+    drawAxes();
+    drawPoints();
 }
 
 readInput();
 createTable();
-readAndDraw();
