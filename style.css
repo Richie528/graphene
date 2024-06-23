@@ -33,11 +33,17 @@ body {
 }
 
 .main {
-    width: 1460px; 
-    height: 710px;
+    position: relative;
+    width: 1500px; 
+    height: 750px;
     border-radius: 10px;
     border: 1px solid var(--c-surface);
-    padding: 20px;
+}
+
+.iv-dv-inputs {
+    position: absolute;
+    top: 0;
+    left: 10px;
 }
 
 .container-row {
@@ -67,16 +73,63 @@ body {
     background: var(--c-base);
 }
 
-.input .input-field {
+.input input {
     padding: 11px 10px;
     border-radius: 5px;
 
-    border: 1px var(--c-lowlight) solid;
+    border: 1px solid var(--c-lowlight);
     color: var(--c-text);
     font-size: 14px;
     background: var(--c-base);
 }
   
-.input .input-field:focus {
+.input input:focus {
     outline: none;
+}
+
+.table-layout-input {
+    position: absolute;
+    top: 170px;
+    left: 10px;
+}
+
+.table-input {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    width: 290px;
+    height: 480px;
+    border-radius: 5px;
+    padding: 10px;
+
+    border: 1px solid var(--c-lowlight);
+}
+
+.table {
+    table-layout: fixed;
+    width: 100%;
+    height: 100%;
+    color: var(--c-subtext);
+    font-family: "Golos text", monospace;
+    font-size: 12px;
+    font-weight: normal;
+}
+
+.table tr {
+
+}
+
+.table th {
+    background-color: var(--c-mantle);
+    text-align: center;
+    font-weight: bold;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.table td {
+    background-color: var(--c-mantle);
+    text-align: center;
+    border-radius: 5px;
+    padding: 10px;
 }
