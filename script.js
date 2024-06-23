@@ -1,21 +1,26 @@
 // input elements
-hIvInput = document.getElementById("iv");
-hDvInput = document.getElementById("dv");
-hIvUnitsInput = document.getElementById("iv-units");
-hDvUnitsInput = document.getElementById("dv-units");
-hNumberOfVariables = document.getElementById("no-variables");
-hNumberOfTrials = document.getElementById("no-trials");
-hInputTable = document.querySelector(".table");
+let hIvInput = document.getElementById("iv");
+let hDvInput = document.getElementById("dv");
+let hIvUnitsInput = document.getElementById("iv-units");
+let hDvUnitsInput = document.getElementById("dv-units");
+let hNumberOfVariables = document.getElementById("no-variables");
+let hNumberOfTrials = document.getElementById("no-trials");
+let hInputTable = document.querySelector(".table");
+// graph elements
+let hCanvas = document.getElementById("canvas");
+let hContext = hCanvas.getContext("2d");
+let hXAxisLabel = document.querySelector(".x-axis-label");
+let hYAxisLabel = document.querySelector(".y-axis-label");
 
 // variables
-independentVariable = "";
-dependentVariable = "";
-ivUnits = "";
-dvUnits = "";
-numberOfVariables = 0;
-numberOfTrials = 0;
+let independentVariable = "";
+let dependentVariable = "";
+let ivUnits = "";
+let dvUnits = "";
+let numberOfVariables = 0;
+let numberOfTrials = 0;
 
-data = []
+let data = []
 
 function readInput() {
     independentVariable = hIvInput.value;
@@ -26,7 +31,7 @@ function readInput() {
     numberOfTrials = parseInt(hNumberOfTrials.value);
 }
 
-function updateTable() {
+function createTable() {
     // clear the table
     hInputTable.innerHTML = "";
     // create first row (iv, dv, blank for no. trials - 1)
@@ -57,6 +62,7 @@ function updateTable() {
         let row = document.createElement("tr");
         for (let i = 0; i <= numberOfTrials; i++) {
             let tableData = document.createElement("td");
+            tableData.style.backgroundColor = "var(--c-crust)";
             tableData.innerHTML = `<input type = "text" onkeypress="return (event.charCode !=8 && event.charCode ==0 || ( event.charCode == 46 || (event.charCode >= 48 && event.charCode <= 57)))">`
             row.appendChild(tableData);
         }
@@ -75,3 +81,38 @@ function readTable() {
         data.push(row);
     }
 }
+
+function drawAxes() {
+    hContext.lineWidth = 1;
+    // y axis
+    hContext.moveTo(100, 100);
+    hContext.lineTo(100, 600);
+    hContext.stroke();
+    // x axis
+    hContext.lineTo(880, 600);
+    hContext.stroke();
+    // axis labels
+    hXAxisLabel.textContent = independentVariable + " (" + ivUnits + ")";
+    hYAxisLabel.textContent = dependentVariable + " (" + dvUnits + ")";
+}
+
+function readAndDraw() {
+    readInput();
+    drawAxes();
+}
+
+hIvInput.onkeyup = function() {readAndDraw()};
+hDvInput.onkeyup = function() {readAndDraw()};
+hIvUnitsInput.onkeyup = function() {readAndDraw()};
+hDvUnitsInput.onkeyup = function() {readAndDraw()};
+
+hNumberOfVariables.onkeyup = function() {
+    readAndDraw();
+    createTable();
+}
+hNumberOfTrials.onkeyup = function() {
+    readAndDraw();
+    createTable();
+}
+
+readAndDraw();

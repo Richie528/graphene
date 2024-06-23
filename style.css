@@ -111,10 +111,6 @@ body {
     height: 100%;
 }
 
-.table tr {
-
-}
-
 .table th {
     background-color: var(--c-mantle);
     text-align: left;
@@ -136,8 +132,44 @@ body {
 
 .table input {
     font-family: "Golos text", monospace;
-    background-color: var(--c-mantle);
-    width: 100%;
+    background-color: var(--c-crust);
+    width: 90%;
     border: none;
     outline: none;
+}
+
+.graph {
+    position: absolute;
+    top: 17px;
+    right: 10px;
+
+    width: 1000px;
+    height: 723px;
+    border-radius: 5px;
+
+    border: 1px solid var(--c-lowlight)
+}
+
+.graph canvas {
+    margin: 10px;
+    border: 1px solid blue;
+}
+
+.y-axis-label {
+    position: absolute;
+    top: 0;
+    left: 50px;
+    height: 100%;
+
+    writing-mode: vertical-rl;
+    text-align: center;
+}
+
+.x-axis-label {
+    position: absolute;
+    bottom: 50px;
+    left: 0;
+    width: 100%;
+
+    text-align: center;
 }
