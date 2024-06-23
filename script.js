@@ -1,3 +1,6 @@
+let graphColours = ["#000000", "#000000", "#000000", "#000000", "#000000"];
+let yummyNumbers = [0.001, 0.05, 0.01, 0.5, 0.1, 1, 2, 3, 4, 5, 10, 20, 25, 50, 75, 100, 150, 200, 250, 300, 500, 1000];
+
 // input elements
 let hIvInput = document.getElementById("iv");
 let hDvInput = document.getElementById("dv");
@@ -19,6 +22,8 @@ let ivUnits = "";
 let dvUnits = "";
 let numberOfVariables = 0;
 let numberOfTrials = 0;
+let xIncrements = 0;
+let yIncrements = 0;
 
 let data = []
 
@@ -74,15 +79,18 @@ function readTable() {
     data = [];
     for (let i = 2; i < 2 + numberOfVariables; i++) {
         hRow = hInputTable.children[i].getElementsByTagName("input");
-        row = [parseInt(hRow[0].value), []];
+        row = [0, []];
+        if (!Number.isNaN(parseInt(hRow[0].value))) row[0] = parseInt(hRow[0].value);
         for (let j = 1; j <= numberOfTrials; j++) {
-            row[1].push(parseInt(hRow[j].value));
+            if (Number.isNaN(parseInt(hRow[j].value))) row[1].push(0);
+            else row[1].push(parseInt(hRow[j].value));
         }
         data.push(row);
     }
 }
 
 function drawAxes() {
+    readTable();
     hContext.lineWidth = 1;
     // y axis
     hContext.moveTo(100, 100);
@@ -94,6 +102,29 @@ function drawAxes() {
     // axis labels
     hXAxisLabel.textContent = independentVariable + " (" + ivUnits + ")";
     hYAxisLabel.textContent = dependentVariable + " (" + dvUnits + ")";
+    // calculate scale
+    mxY = 0;
+    for (let i = 0; i < numberOfVariables; i++) {
+        mxY = Math.max(mxY, ...data[i][1]);
+    }
+    yIncrements = mxY / 10;
+    let l = 0, r = yummyNumbers.length;
+    while (l != r - 1) {
+        let m = Math.floor((l + r) / 2);
+        if (yummyNumbers[m] <= yIncrements) l = m;
+        else r = m;
+    }
+    yIncrements = yummyNumbers[l];
+
+    console.log(yIncrements);
+}
+
+function drawPoints() {
+    for (let i = 0; i < numberOfVariables; i++) {
+        for (let j = 0; j < numberOfTrials; j++) {
+
+        }
+    }
 }
 
 function readAndDraw() {
@@ -107,12 +138,14 @@ hIvUnitsInput.onkeyup = function() {readAndDraw()};
 hDvUnitsInput.onkeyup = function() {readAndDraw()};
 
 hNumberOfVariables.onkeyup = function() {
-    readAndDraw();
     createTable();
+    readAndDraw();
 }
 hNumberOfTrials.onkeyup = function() {
-    readAndDraw();
     createTable();
+    readAndDraw();
 }
 
+readInput();
+createTable();
 readAndDraw();
