@@ -10,6 +10,7 @@ let hNumberOfVariables = document.getElementById("no-variables");
 let hNumberOfTrials = document.getElementById("no-trials");
 let hInputTable = document.querySelector(".table");
 let hRunButton = document.getElementById("run");
+let hTableInputs = hInputTable.getElementsByTagName("input");
 // graph elements
 let hGraph = document.querySelector(".graph");
 let hCanvas = document.getElementById("canvas");
@@ -41,6 +42,7 @@ function readInput() {
 }
 
 function createTable() {
+    readInput();
     // clear the table
     hInputTable.innerHTML = "";
     // create first row (iv, dv, blank for no. trials - 1)
@@ -77,20 +79,46 @@ function createTable() {
         }
         hInputTable.appendChild(row);
     }
+    getTableInputs();
+}
+
+function getTableInputs() {
+    hTableInputs = hInputTable.getElementsByTagName("input");
+    let temp = [];
+    for (let i = 0; i < numberOfVariables; i++) {
+        let row = [];
+        for (let j = 0; j < numberOfTrials + 1; j++) {
+            row.push(hTableInputs[i * (numberOfTrials + 1) + j]);
+        }
+        temp.push(row);
+    }
+    hTableInputs = [...temp];
+    for (let i = 0; i < numberOfVariables; i++) {
+        for (let j = 0; j < numberOfTrials + 1; j++) {
+            hTableInputs[i][j].onkeydown = function(e) {
+                // e = e || window.event;
+                if (e.keyCode == "38" && i > 0) hTableInputs[i - 1][j].focus();
+                if (e.keyCode == "40" && i < numberOfVariables - 1) hTableInputs[i + 1][j].focus();
+                if (e.keyCode == "37" && j > 0) hTableInputs[i][j - 1].focus(); 
+                if (e.keyCode == "39" && j < numberOfTrials) hTableInputs[i][j + 1].focus();
+            }
+        }
+    }
 }
 
 function readTable() {
     data = [];
-    for (let i = 2; i < 2 + numberOfVariables; i++) {
-        hRow = hInputTable.children[i].getElementsByTagName("input");
+    getTableInputs();
+    for (let i = 0; i < numberOfVariables; i++) {
         row = [0, []];
-        if (!Number.isNaN(parseInt(hRow[0].value))) row[0] = parseInt(hRow[0].value);
+        if (!Number.isNaN(parseInt(hTableInputs[i][0].value))) row[0] = parseInt(hTableInputs[i][0].value);
         for (let j = 1; j <= numberOfTrials; j++) {
-            if (Number.isNaN(parseInt(hRow[j].value))) row[1].push(0);
-            else row[1].push(parseInt(hRow[j].value));
+            if (Number.isNaN(parseInt(hTableInputs[i][j].value))) row[1].push(0);
+            else row[1].push(parseInt(hTableInputs[i][j].value));
         }
         data.push(row);
     }
+    console.log(data);
 }
 
 function drawGraph() {
@@ -173,18 +201,14 @@ function drawPoints() {
     }
 }
 
-hNumberOfVariables.onkeyup = function() {
-    readInput();
-    createTable();
-}
-hNumberOfTrials.onkeyup = function() {
-    readInput();
-    createTable();
-}
+hIvInput.onkeyup = function() {createTable()};
+hDvInput.onkeyup = function() {createTable()};
+hIvUnitsInput.onkeyup = function() {createTable()};
+hDvUnitsInput.onkeyup = function() {createTable()};
+hNumberOfVariables.onkeyup = function() {createTable()};
+hNumberOfTrials.onkeyup = function() {createTable()};
 
-hRunButton.onclick = function() {
-    drawGraph();
-}
+hRunButton.onclick = function() {drawGraph()};
 
 readInput();
 createTable();
