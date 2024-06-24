@@ -43,6 +43,7 @@ function readInput() {
 
 function createTable() {
     readInput();
+    readTable();
     // clear the table
     hInputTable.innerHTML = "";
     // create first row (iv, dv, blank for no. trials - 1)
@@ -96,11 +97,34 @@ function getTableInputs() {
     for (let i = 0; i < numberOfVariables; i++) {
         for (let j = 0; j < numberOfTrials + 1; j++) {
             hTableInputs[i][j].onkeydown = function(e) {
-                // e = e || window.event;
-                if (e.keyCode == "38" && i > 0) hTableInputs[i - 1][j].focus();
-                if (e.keyCode == "40" && i < numberOfVariables - 1) hTableInputs[i + 1][j].focus();
-                if (e.keyCode == "37" && j > 0) hTableInputs[i][j - 1].focus(); 
-                if (e.keyCode == "39" && j < numberOfTrials) hTableInputs[i][j + 1].focus();
+                if (e.keyCode == "38" && i > 0) {
+                    setTimeout(function() {
+                        hTableInputs[i - 1][j].focus();
+                        hTableInputs[i - 1][j].selectionStart = hTableInputs[i - 1][j].value.length;
+                        hTableInputs[i - 1][j].selectionEnd = hTableInputs[i - 1][j].value.length;
+                    }, 50);
+                }
+                if (e.keyCode == "40" && i < numberOfVariables - 1) {
+                    hTableInputs[i + 1][j].focus();
+                    hTableInputs[i + 1][j].selectionStart = hTableInputs[i + 1][j].value.length;
+                    hTableInputs[i + 1][j].selectionEnd = hTableInputs[i + 1][j].value.length;
+                }
+                if (e.keyCode == "37" && j > 0) {
+                    if (hTableInputs[i][j].selectionStart == 0) {
+                        setTimeout(function() {
+                            hTableInputs[i][j - 1].focus();
+                            hTableInputs[i][j - 1].selectionStart = hTableInputs[i][j - 1].value.length;
+                            hTableInputs[i][j - 1].selectionEnd = hTableInputs[i][j - 1].value.length;
+                        }, 50);
+                    }
+                }
+                if (e.keyCode == "39" && j < numberOfTrials) {
+                    if (hTableInputs[i][j].selectionEnd == hTableInputs[i][j].value.length) {
+                        hTableInputs[i][j + 1].focus();
+                        hTableInputs[i][j + 1].selectionStart = hTableInputs[i][j + 1].value.length;
+                        hTableInputs[i][j + 1].selectionEnd = hTableInputs[i][j + 1].value.length;
+                    }
+                }
             }
         }
     }
