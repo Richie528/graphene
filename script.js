@@ -43,7 +43,6 @@ function readInput() {
 
 function createTable() {
     readInput();
-    readTable();
     // clear the table
     hInputTable.innerHTML = "";
     // create first row (iv, dv, blank for no. trials - 1)
@@ -70,13 +69,17 @@ function createTable() {
     }
     hInputTable.appendChild(secondRow);
     // create rest of rows
-    for (let i = 1; i <= numberOfVariables; i++) {
+    for (let i = 0; i < numberOfVariables; i++) {
         let row = document.createElement("tr");
-        for (let i = 0; i <= numberOfTrials; i++) {
+        for (let j = 0; j <= numberOfTrials; j++) {
             let tableData = document.createElement("td");
             tableData.style.backgroundColor = "var(--c-crust)";
-            tableData.innerHTML = `<input type = "text" onkeypress="return (event.charCode !=8 && event.charCode ==0 || ( event.charCode == 46 || (event.charCode >= 48 && event.charCode <= 57)))">`
+            tableData.innerHTML = `<input type = "text" onkeypress="return (event.charCode !=8 && event.charCode ==0 || ( event.charCode == 46 || (event.charCode >= 48 && event.charCode <= 57)))">`;
             row.appendChild(tableData);
+            if (i >= data.length) continue;
+            if (j > data[0][1].length) continue;
+            if (j == 0) tableData.children[0].value = data[i][0];
+            else tableData.children[0].value = data[i][1][j - 1];
         }
         hInputTable.appendChild(row);
     }
@@ -125,6 +128,9 @@ function getTableInputs() {
                         hTableInputs[i][j + 1].selectionEnd = hTableInputs[i][j + 1].value.length;
                     }
                 }
+            }
+            hTableInputs[i][j].onkeyup = function() {
+                readTable();
             }
         }
     }
