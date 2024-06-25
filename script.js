@@ -148,15 +148,15 @@ function readTable() {
     data = [];
     for (let i = 0; i < numberOfVariables; i++) {
         row = [0, [], 0];
-        if (!Number.isNaN(parseInt(hTableInputs[i][0].value))) row[0] = parseInt(hTableInputs[i][0].value);
+        if (!Number.isNaN(parseFloat(hTableInputs[i][0].value))) row[0] = parseFloat(hTableInputs[i][0].value);
         let cnt = 0;
         for (let j = 1; j <= numberOfTrials; j++) {
-            if (Number.isNaN(parseInt(hTableInputs[i][j].value))) row[1].push(0);
-            else row[1].push(parseInt(hTableInputs[i][j].value));
+            if (Number.isNaN(parseFloat(hTableInputs[i][j].value))) row[1].push(0);
+            else row[1].push(parseFloat(hTableInputs[i][j].value));
             cnt += row[1][j - 1];
         }
-        row[2] = (cnt / numberOfTrials).toFixed(2);
-        hAverages[i].textContent = row[2].toString();
+        row[2] = Math.round(cnt / numberOfTrials * 100) / 100;
+        hAverages[i].textContent = row[2].toFixed(2);
         data.push(row);
     }
 }
@@ -242,6 +242,25 @@ function drawPoints() {
         hContext.fillStyle = "#333333";
         hContext.fillRect(x - 2, y - 2, 4, 4);
     }
+}
+
+function drawTrendLine() {
+    // linear
+    let sumX = 0;
+    let sumY = 0;
+    let a = 0, b, c = 0, d;
+    for (let i = 0; i < numberOfVariables; i++) {
+        sumX += data[i][0];
+        sumY += data[i][2];
+        a += data[i][0] * data[i][2];
+        c += data[i][0] * data[i][0];
+    }
+    a = a * numberOfVariables;
+    b = sumX * sumY;
+    c = c * numberOfVariables;
+    d = sumX * sumX;
+    let m = (a - b) / (c - d);
+    console.log(m);
 }
 
 hIvInput.onkeyup = function() {createTable(); drawGraph();};
