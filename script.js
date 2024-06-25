@@ -9,8 +9,8 @@ let hDvUnitsInput = document.getElementById("dv-units");
 let hNumberOfVariables = document.getElementById("no-variables");
 let hNumberOfTrials = document.getElementById("no-trials");
 let hInputTable = document.querySelector(".table");
-let hRunButton = document.getElementById("run");
 let hTableInputs = hInputTable.getElementsByTagName("input");
+let hAverages = hInputTable.querySelectorAll(".avg");
 // graph elements
 let hGraph = document.querySelector(".graph");
 let hCanvas = document.getElementById("canvas");
@@ -53,7 +53,7 @@ function createTable() {
     tableHeadingDv.textContent = dependentVariable;
     firstRow.appendChild(tableHeadingIv);
     firstRow.appendChild(tableHeadingDv);
-    for (let i = 2; i <= numberOfTrials; i++) {
+    for (let i = 2; i <= numberOfTrials + 1; i++) {
         let tableData = document.createElement("td");
         firstRow.appendChild(tableData);
     }
@@ -67,6 +67,9 @@ function createTable() {
         tableHeading.textContent = "Trial " + i.toString();
         secondRow.appendChild(tableHeading);
     }
+    let avgTableHeading = document.createElement("th");
+    avgTableHeading.textContent = "Average";
+    secondRow.appendChild(avgTableHeading);
     hInputTable.appendChild(secondRow);
     // create rest of rows
     for (let i = 0; i < numberOfVariables; i++) {
@@ -81,9 +84,13 @@ function createTable() {
             if (j == 0) tableData.children[0].value = data[i][0];
             else tableData.children[0].value = data[i][1][j - 1];
         }
+        avgTableData = document.createElement("td");
+        avgTableData.classList.add("avg");
+        row.appendChild(avgTableData);
         hInputTable.appendChild(row);
     }
     getTableInputs();
+    readTable();
 }
 
 function getTableInputs() {
@@ -130,25 +137,28 @@ function getTableInputs() {
                 }
             }
             hTableInputs[i][j].onkeyup = function() {
-                readTable();
+                drawGraph();
             }
         }
     }
 }
 
 function readTable() {
+    hAverages = hInputTable.querySelectorAll(".avg");
     data = [];
-    getTableInputs();
     for (let i = 0; i < numberOfVariables; i++) {
-        row = [0, []];
+        row = [0, [], 0];
         if (!Number.isNaN(parseInt(hTableInputs[i][0].value))) row[0] = parseInt(hTableInputs[i][0].value);
+        let cnt = 0;
         for (let j = 1; j <= numberOfTrials; j++) {
             if (Number.isNaN(parseInt(hTableInputs[i][j].value))) row[1].push(0);
             else row[1].push(parseInt(hTableInputs[i][j].value));
+            cnt += row[1][j - 1];
         }
+        row[2] = (cnt / numberOfTrials).toFixed(2);
+        hAverages[i].textContent = row[2].toString();
         data.push(row);
     }
-    console.log(data);
 }
 
 function drawGraph() {
@@ -224,21 +234,22 @@ function drawPoints() {
     for (let i = 0; i < numberOfVariables; i++) {
         let x = 100 + data[i][0] * xScale;
         for (let j = 0; j < numberOfTrials; j++) {
-            y = 600 - data[i][1][j] * yScale;
+            let y = 600 - data[i][1][j] * yScale;
             hContext.fillStyle = graphColours[j];
             hContext.fillRect(x - 2, y - 2, 4, 4);
         }
+        let y = 600 - data[i][2] * yScale;
+        hContext.fillStyle = "#333333";
+        hContext.fillRect(x - 2, y - 2, 4, 4);
     }
 }
 
-hIvInput.onkeyup = function() {createTable()};
-hDvInput.onkeyup = function() {createTable()};
-hIvUnitsInput.onkeyup = function() {createTable()};
-hDvUnitsInput.onkeyup = function() {createTable()};
-hNumberOfVariables.onkeyup = function() {createTable()};
-hNumberOfTrials.onkeyup = function() {createTable()};
-
-hRunButton.onclick = function() {drawGraph()};
+hIvInput.onkeyup = function() {createTable(); drawGraph();};
+hDvInput.onkeyup = function() {createTable(); drawGraph();};
+hIvUnitsInput.onkeyup = function() {createTable(); drawGraph();};
+hDvUnitsInput.onkeyup = function() {createTable(); drawGraph();};
+hNumberOfVariables.onkeyup = function() {createTable(); drawGraph();};
+hNumberOfTrials.onkeyup = function() {createTable(); drawGraph();};
 
 readInput();
 createTable();

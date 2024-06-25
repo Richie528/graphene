@@ -131,6 +131,8 @@ body {
 }
 
 .table td {
+    font-family: "Golos text", monospace;
+    font-size: 14px;
     background-color: var(--c-mantle);
     border-radius: 5px;
     padding: 5px;
