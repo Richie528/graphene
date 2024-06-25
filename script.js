@@ -1,4 +1,4 @@
-let graphColours = ["#df8e1d", "#04a5e5", "#40a02b", "#e64553", "#1e66f5"];
+let graphColours = ["#df8e1d", "#9c42f5", "#40a02b", "#e64553", "#1f4694"];
 let yummyNumbers = [1, 2, 3, 4, 5, 6, 8, 10, 12, 15, 20, 25, 50, 75, 100, 150, 200, 250, 300, 500, 1000];
 
 // input elements
@@ -29,6 +29,8 @@ let yScale = 0;
 let xScale = 0;
 let yIncrement = 0;
 let xIncrement = 0;
+let yRange = [0, 0];
+let xRange = [0, 0];
 
 let data = []
 
@@ -176,9 +178,11 @@ function clearCanvas() {
 
 function calculateScale() {
     // calculate scale
-    mxX = 0, mxY = 0;
+    let mnX = 999999999999999, mxX = 0, mnY = 999999999999999, mxY = 0;
     for (let i = 0; i < numberOfVariables; i++) {
+        mnX = Math.min(mnX, data[i][0]);
         mxX = Math.max(mxX, data[i][0]);
+        mnY = Math.min(mnY, ...data[i][1]);
         mxY = Math.max(mxY, ...data[i][1]);
     }
     for (let yummyNumber of yummyNumbers) {
@@ -193,6 +197,8 @@ function calculateScale() {
         xIncrement = yummyNumber;
         break;
     }
+    xRange = [mnX, mxX];
+    yRange = [mnY, mxY];
 }
 
 function drawAxes() {
@@ -216,7 +222,7 @@ function drawAxes() {
         scaleLabel.textContent = (yIncrement * i).toString();
         scaleLabel.style.top = (y + 3).toString() + "px";
         hGraph.appendChild(scaleLabel);
-        if (i * yIncrement >= mxY) break;
+        if (i * yIncrement >= yRange[1]) break;
     }
     for (let i = 0;; i++) {
         let x = 100 + i * xIncrement * xScale;
@@ -226,7 +232,7 @@ function drawAxes() {
         scaleLabel.textContent = (xIncrement * i).toString();
         scaleLabel.style.left = (x).toString() + "px";
         hGraph.appendChild(scaleLabel);
-        if (i * xIncrement >= mxX) break;
+        if (i * xIncrement >= xRange[1]) break;
     }
 }
 
@@ -239,7 +245,7 @@ function drawPoints() {
             hContext.fillRect(x - 2, y - 2, 4, 4);
         }
         let y = 600 - data[i][2] * yScale;
-        hContext.fillStyle = "#333333";
+        hContext.fillStyle = "#4287f5";
         hContext.fillRect(x - 2, y - 2, 4, 4);
     }
 }
@@ -248,7 +254,7 @@ function drawTrendLine() {
     // linear
     let sumX = 0;
     let sumY = 0;
-    let a = 0, b, c = 0, d;
+    let a = 0, b, c = 0, d, e, f;
     for (let i = 0; i < numberOfVariables; i++) {
         sumX += data[i][0];
         sumY += data[i][2];
@@ -259,8 +265,17 @@ function drawTrendLine() {
     b = sumX * sumY;
     c = c * numberOfVariables;
     d = sumX * sumX;
-    let m = (a - b) / (c - d);
-    console.log(m);
+    let gradient = (a - b) / (c - d);
+    e = sumY;
+    f = gradient * sumX;
+    let intercept = (e - f) / numberOfVariables;
+    console.log(gradient);
+    console.log(intercept);
+
+    hContext.strokeStyle = "#4287f5";
+    hContext.moveTo(100 + xRange[0] * xScale, 600 - (gradient * xRange[0] + intercept) * yScale);
+    hContext.lineTo(100 + xRange[1] * xScale, 600 - (gradient * xRange[1] + intercept) * yScale);
+    hContext.stroke();
 }
 
 hIvInput.onkeyup = function() {createTable(); drawGraph();};
