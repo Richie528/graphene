@@ -15,6 +15,8 @@ let hAverages = hInputTable.querySelectorAll(".avg");
 let hGraph = document.querySelector(".graph");
 let hCanvas = document.getElementById("canvas");
 let hContext = hCanvas.getContext("2d");
+let hEquation = document.querySelector(".equation");
+let hRSquared = document.querySelector(".r-squared");
 let hXAxisLabel = document.querySelector(".x-axis-label");
 let hYAxisLabel = document.querySelector(".y-axis-label");
 
@@ -31,6 +33,9 @@ let yIncrement = 0;
 let xIncrement = 0;
 let yRange = [0, 0];
 let xRange = [0, 0];
+let gradient = 0;
+let intercept = 0;
+let rSquared = 0;
 
 let data = []
 
@@ -40,7 +45,9 @@ function readInput() {
     ivUnits = hIvUnitsInput.value;
     dvUnits = hDvUnitsInput.value;
     numberOfVariables = parseInt(hNumberOfVariables.value);
+    if (Number.isNaN(numberOfVariables)) numberOfVariables = 0;
     numberOfTrials = parseInt(hNumberOfTrials.value);
+    if (Number.isNaN(numberOfTrials)) numberOfTrials = 0;
 }
 
 function createTable() {
@@ -83,15 +90,14 @@ function createTable() {
             row.appendChild(tableData);
             if (i >= data.length) continue;
             if (j > data[0][1].length) continue;
-            if (j == 0) tableData.children[0].value = data[i][0];
-            else tableData.children[0].value = data[i][1][j - 1];
+            if (j == 0) tableData.children[0].value = (data[i][0] == 0) ? "" : data[i][0];
+            else tableData.children[0].value = (data[i][1][j - 1] == 0) ? "" : data[i][1][j - 1];
         }
         avgTableData = document.createElement("td");
         avgTableData.classList.add("avg");
         row.appendChild(avgTableData);
         hInputTable.appendChild(row);
     }
-    getTableInputs();
     readTable();
 }
 
@@ -146,6 +152,8 @@ function getTableInputs() {
 }
 
 function readTable() {
+    readInput();
+    getTableInputs();
     hAverages = hInputTable.querySelectorAll(".avg");
     data = [];
     for (let i = 0; i < numberOfVariables; i++) {
@@ -250,8 +258,7 @@ function drawPoints() {
     }
 }
 
-function drawTrendLine() {
-    // linear
+function calculateTrendline() {
     let sumX = 0;
     let sumY = 0;
     let a = 0, b, c = 0, d, e, f;
@@ -265,17 +272,45 @@ function drawTrendLine() {
     b = sumX * sumY;
     c = c * numberOfVariables;
     d = sumX * sumX;
-    let gradient = (a - b) / (c - d);
+    gradient = (a - b) / (c - d);
     e = sumY;
     f = gradient * sumX;
-    let intercept = (e - f) / numberOfVariables;
-    console.log(gradient);
-    console.log(intercept);
+    intercept = (e - f) / numberOfVariables;
+}
 
+function calculateRSquared() {
+    let sumResiduals = 0;
+    let sumDiff = 0;
+    for (let i = 0; i < numberOfVariables; i++) {
+        y = data[i][0] * gradient + intercept;
+        let residual = data[i][2] - y;
+        sumResiduals += residual * residual;
+    }
+    let avgY = 0;
+    for (let i = 0; i < numberOfVariables; i++) {
+        avgY += data[i][2];
+    }
+    avgY = avgY / numberOfVariables;
+    for (let i = 0; i < numberOfVariables; i++) {
+        sumDiff += (data[i][2] - avgY) * (data[i][2] - avgY);
+    }
+    rSquared = 1 - sumResiduals / sumDiff;
+    console.log(rSquared);
+}
+
+function drawTrendline() {
     hContext.strokeStyle = "#4287f5";
     hContext.moveTo(100 + xRange[0] * xScale, 600 - (gradient * xRange[0] + intercept) * yScale);
     hContext.lineTo(100 + xRange[1] * xScale, 600 - (gradient * xRange[1] + intercept) * yScale);
     hContext.stroke();
+}
+
+function drawEquation() {
+    hEquation.textContent = "y = " + gradient.toString() + "x + " + intercept.toString();
+}
+
+function drawRSquared() {
+    hRSquared.textContent = "R² = " + rSquared.toString();
 }
 
 hIvInput.onkeyup = function() {createTable(); drawGraph();};
