@@ -164,6 +164,60 @@ body {
     border: 1px solid var(--c-lowlight);
 }
 
+.checkbox {
+    display: flex;
+    flex-direction: column;
+}
+
+.checkbox label.text {
+    position: relative;
+    top: 7px;
+    margin: 0 0 0 7px;
+    padding: 0 3px;
+    width: fit-content;
+
+    font-size: 13px;
+    color: var(--c-highlight);
+}
+
+.checkbox input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    cursor: pointer;
+  
+    position: relative;
+    margin: 10px 0px 0px 9px;
+    width: 40px;
+    height: 15px;
+    
+    border-radius: 5px;
+    background-color: #dce0e8;
+    transition: background-color 0.3s;
+}
+
+.checkbox input:before {
+    content: "";
+    background: whitesmoke;
+    border-radius: 4px;
+    transition: left 0.25s;
+  
+    position: absolute;
+    z-index: 2;
+    width: 11px;
+    height: 11px;
+    left: 2px;
+    top: 2px;
+}
+
+.checkbox input:checked {
+    background-color: var(--c-lowlight);
+}
+
+.checkbox input:checked:before {
+    left: 26px;
+}
+
 .graph {
     position: absolute;
     top: 15px;

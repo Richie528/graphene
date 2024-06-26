@@ -12,6 +12,13 @@ let hNumberOfTrials = document.getElementById("no-trials");
 let hInputTable = document.querySelector(".table");
 let hTableInputs = hInputTable.getElementsByTagName("input");
 let hAverages = hInputTable.querySelectorAll(".avg");
+// style settings
+let hSGraphTitle = document.getElementById("show-graph-title");
+let hSAverage = document.getElementById("show-average");
+let hSNonAverage = document.getElementById("show-non-average");
+let hSTrendline = document.getElementById("show-trendline");
+let hSEquation = document.getElementById("show-equation");
+let hSRSquared = document.getElementById("show-r-squared");
 // graph elements
 let hGraph = document.querySelector(".graph");
 let hCanvas = document.getElementById("canvas");
@@ -22,14 +29,16 @@ let hRSquared = document.querySelector(".r-squared");
 let hXAxisLabel = document.querySelector(".x-axis-label");
 let hYAxisLabel = document.querySelector(".y-axis-label");
 
-// variables
+// graph info
 let graphTitle = "";
 let independentVariable = "";
 let dependentVariable = "";
 let ivUnits = "";
 let dvUnits = "";
+// table
 let numberOfVariables = 0;
 let numberOfTrials = 0;
+// graph stats
 let yScale = 0;
 let xScale = 0;
 let yIncrement = 0;
@@ -39,6 +48,13 @@ let xRange = [0, 0];
 let gradient = 0;
 let intercept = 0;
 let rSquared = 0;
+// style settings
+let sGraphTitle = true;
+let sAverage = true;
+let sNonAverage = true;
+let sTrendline = true;
+let sEquation = true;
+let sRSquared = true;
 
 let data = []
 
@@ -52,6 +68,15 @@ function readInput() {
     if (Number.isNaN(numberOfVariables)) numberOfVariables = 0;
     numberOfTrials = parseInt(hNumberOfTrials.value);
     if (Number.isNaN(numberOfTrials)) numberOfTrials = 0;
+}
+
+function readSettings() {
+    sGraphTitle = hSGraphTitle.checked;
+    sAverage = hSAverage.checked;
+    sNonAverage = hSNonAverage.checked;
+    sTrendline = hSTrendline.checked;
+    sEquation = hSEquation.checked;
+    sRSquared = hSRSquared.checked;
 }
 
 function createTable() {
@@ -237,7 +262,6 @@ function calculateRSquared() {
         sumDiff += (data[i][2] - avgY) * (data[i][2] - avgY);
     }
     rSquared = 1 - sumResiduals / sumDiff;
-    console.log(rSquared);
 }
 
 function clearCanvas() {
@@ -316,6 +340,7 @@ function drawRSquared() {
 
 function drawGraph() {
     readInput();
+    readSettings();
     readTable();
     clearCanvas();
     calculateScale();
@@ -329,13 +354,23 @@ function drawGraph() {
     drawRSquared();
 }
 
-hGraphTitleInput.onkeyup = function() {createTable(); drawGraph();};
-hIvInput.onkeyup = function() {createTable(); drawGraph();};
-hDvInput.onkeyup = function() {createTable(); drawGraph();};
-hIvUnitsInput.onkeyup = function() {createTable(); drawGraph();};
-hDvUnitsInput.onkeyup = function() {createTable(); drawGraph();};
-hNumberOfVariables.onkeyup = function() {createTable(); drawGraph();};
-hNumberOfTrials.onkeyup = function() {createTable(); drawGraph();};
+hGraphTitleInput.onkeyup = 
+hIvInput.onkeyup = 
+hDvInput.onkeyup = 
+hIvUnitsInput.onkeyup =
+hDvUnitsInput.onkeyup =
+hNumberOfVariables.onkeyup = 
+hNumberOfTrials.onkeyup = 
+hSGraphTitle.onclick = 
+hSAverage.onclick = 
+hSNonAverage.onclick =
+hSTrendline.onclick = 
+hSEquation.onclick = 
+hSRSquared.onclick = 
+function() { 
+    createTable(); 
+    drawGraph();
+};
 
 readInput();
 createTable();
