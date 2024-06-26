@@ -17,6 +17,14 @@
 
 <body>
     <div class="main">
+
+        <div class="graph-title-input">
+            <div class="input">
+                <label for="input" class="text">Graph Title:</label>
+                <input type="text" placeholder="graph-title" id="graph-title" style="width: 290px">
+            </div>
+        </div>
+
         <div class="iv-dv-inputs">
             <div class="container-row">
                 <div class="input">
@@ -61,10 +69,16 @@
             </table>
         </div>
 
-        <div class="graph">
-            <canvas id="canvas" width="980" height="703">
+        <div class="style-input">
+            <div class="checkbox">
+                <label for="input" class="text">Trendline:</label>
+                <input type="checkbox" id="trendline">
+            </div>
+        </div>
 
-            </canvas>
+        <div class="graph">
+            <canvas id="canvas" width="980" height="703"></canvas>
+            <div class="graph-title"></div>
             <div class="equation"></div>
             <div class="r-squared"></div>
             <div class="x-axis-label"></div>

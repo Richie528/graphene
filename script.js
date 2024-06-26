@@ -2,6 +2,7 @@ let graphColours = ["#df8e1d", "#9c42f5", "#40a02b", "#e64553", "#1f4694"];
 let yummyNumbers = [1, 2, 3, 4, 5, 6, 8, 10, 12, 15, 20, 25, 50, 75, 100, 150, 200, 250, 300, 500, 1000];
 
 // input elements
+let hGraphTitleInput = document.getElementById("graph-title");
 let hIvInput = document.getElementById("iv");
 let hDvInput = document.getElementById("dv");
 let hIvUnitsInput = document.getElementById("iv-units");
@@ -15,12 +16,14 @@ let hAverages = hInputTable.querySelectorAll(".avg");
 let hGraph = document.querySelector(".graph");
 let hCanvas = document.getElementById("canvas");
 let hContext = hCanvas.getContext("2d");
+let hGraphTitle = document.querySelector(".graph-title");
 let hEquation = document.querySelector(".equation");
 let hRSquared = document.querySelector(".r-squared");
 let hXAxisLabel = document.querySelector(".x-axis-label");
 let hYAxisLabel = document.querySelector(".y-axis-label");
 
 // variables
+let graphTitle = "";
 let independentVariable = "";
 let dependentVariable = "";
 let ivUnits = "";
@@ -40,6 +43,7 @@ let rSquared = 0;
 let data = []
 
 function readInput() {
+    graphTitle = hGraphTitleInput.value;
     independentVariable = hIvInput.value;
     dependentVariable = hDvInput.value;
     ivUnits = hIvUnitsInput.value;
@@ -171,19 +175,6 @@ function readTable() {
     }
 }
 
-function drawGraph() {
-    readInput();
-    readTable();
-    clearCanvas();
-    calculateScale();
-    drawAxes();
-    drawPoints();
-}
-
-function clearCanvas() {
-    hContext.canvas.width = hContext.canvas.width;
-}
-
 function calculateScale() {
     // calculate scale
     let mnX = 999999999999999, mxX = 0, mnY = 999999999999999, mxY = 0;
@@ -207,55 +198,6 @@ function calculateScale() {
     }
     xRange = [mnX, mxX];
     yRange = [mnY, mxY];
-}
-
-function drawAxes() {
-    // draw axis lines
-    hContext.lineWidth = 0.5;
-    hContext.moveTo(100, 100); hContext.lineTo(100, 600); hContext.stroke();
-    hContext.lineTo(880, 600); hContext.stroke();
-    // create axis labels
-    hXAxisLabel.textContent = independentVariable + " (" + ivUnits + ")";
-    hYAxisLabel.textContent = dependentVariable + " (" + dvUnits + ")";
-    // scale labels
-    xScaleLabels = document.querySelectorAll(".x-axis-scale-label");
-    yScaleLabels = document.querySelectorAll(".y-axis-scale-label");
-    for (let element of xScaleLabels) element.remove();
-    for (let element of yScaleLabels) element.remove();
-    for (let i = 0;; i++) {
-        let y = 600 - i * yIncrement * yScale;
-        hContext.moveTo(95, y); hContext.lineTo(100, y); hContext.stroke();
-        let scaleLabel = document.createElement("div");
-        scaleLabel.classList.add("y-axis-scale-label");
-        scaleLabel.textContent = (yIncrement * i).toString();
-        scaleLabel.style.top = (y + 3).toString() + "px";
-        hGraph.appendChild(scaleLabel);
-        if (i * yIncrement >= yRange[1]) break;
-    }
-    for (let i = 0;; i++) {
-        let x = 100 + i * xIncrement * xScale;
-        hContext.moveTo(x, 600); hContext.lineTo(x, 605); hContext.stroke();
-        let scaleLabel = document.createElement("div");
-        scaleLabel.classList.add("x-axis-scale-label");
-        scaleLabel.textContent = (xIncrement * i).toString();
-        scaleLabel.style.left = (x).toString() + "px";
-        hGraph.appendChild(scaleLabel);
-        if (i * xIncrement >= xRange[1]) break;
-    }
-}
-
-function drawPoints() {
-    for (let i = 0; i < numberOfVariables; i++) {
-        let x = 100 + data[i][0] * xScale;
-        for (let j = 0; j < numberOfTrials; j++) {
-            let y = 600 - data[i][1][j] * yScale;
-            hContext.fillStyle = graphColours[j];
-            hContext.fillRect(x - 2, y - 2, 4, 4);
-        }
-        let y = 600 - data[i][2] * yScale;
-        hContext.fillStyle = "#4287f5";
-        hContext.fillRect(x - 2, y - 2, 4, 4);
-    }
 }
 
 function calculateTrendline() {
@@ -298,6 +240,65 @@ function calculateRSquared() {
     console.log(rSquared);
 }
 
+function clearCanvas() {
+    hContext.canvas.width = hContext.canvas.width;
+}
+
+function drawTitle() {
+    hGraphTitle.textContent = graphTitle;
+}
+
+function drawAxes() {
+    // draw axis lines
+    hContext.lineWidth = 0.5;
+    hContext.moveTo(100, 100); hContext.lineTo(100, 600); hContext.stroke();
+    hContext.lineTo(880, 600); hContext.stroke();
+    // create axis labels
+    hXAxisLabel.textContent = independentVariable + " (" + ivUnits + ")";
+    hYAxisLabel.textContent = dependentVariable + " (" + dvUnits + ")";
+    // scale labels
+    xScaleLabels = document.querySelectorAll(".x-axis-scale-label");
+    yScaleLabels = document.querySelectorAll(".y-axis-scale-label");
+    for (let element of xScaleLabels) element.remove();
+    for (let element of yScaleLabels) element.remove();
+    for (let i = 0;; i++) {
+        if (yRange[1] == 0) break;
+        let y = 600 - i * yIncrement * yScale;
+        hContext.moveTo(95, y); hContext.lineTo(100, y); hContext.stroke();
+        let scaleLabel = document.createElement("div");
+        scaleLabel.classList.add("y-axis-scale-label");
+        scaleLabel.textContent = (yIncrement * i).toString();
+        scaleLabel.style.top = (y + 3).toString() + "px";
+        hGraph.appendChild(scaleLabel);
+        if (i * yIncrement >= yRange[1]) break;
+    }
+    for (let i = 0;; i++) {
+        if (xRange[1] == 0) break;
+        let x = 100 + i * xIncrement * xScale;
+        hContext.moveTo(x, 600); hContext.lineTo(x, 605); hContext.stroke();
+        let scaleLabel = document.createElement("div");
+        scaleLabel.classList.add("x-axis-scale-label");
+        scaleLabel.textContent = (xIncrement * i).toString();
+        scaleLabel.style.left = (x).toString() + "px";
+        hGraph.appendChild(scaleLabel);
+        if (i * xIncrement >= xRange[1]) break;
+    }
+}
+
+function drawPoints() {
+    for (let i = 0; i < numberOfVariables; i++) {
+        let x = 100 + data[i][0] * xScale;
+        for (let j = 0; j < numberOfTrials; j++) {
+            let y = 600 - data[i][1][j] * yScale;
+            hContext.fillStyle = graphColours[j];
+            hContext.fillRect(x - 2, y - 2, 4, 4);
+        }
+        let y = 600 - data[i][2] * yScale;
+        hContext.fillStyle = "#4287f5";
+        hContext.fillRect(x - 2, y - 2, 4, 4);
+    }
+}
+
 function drawTrendline() {
     hContext.strokeStyle = "#4287f5";
     hContext.moveTo(100 + xRange[0] * xScale, 600 - (gradient * xRange[0] + intercept) * yScale);
@@ -313,6 +314,22 @@ function drawRSquared() {
     hRSquared.textContent = "R² = " + rSquared.toString();
 }
 
+function drawGraph() {
+    readInput();
+    readTable();
+    clearCanvas();
+    calculateScale();
+    calculateTrendline();
+    calculateRSquared();
+    drawTitle();
+    drawAxes();
+    drawPoints();
+    drawTrendline();
+    drawEquation();
+    drawRSquared();
+}
+
+hGraphTitleInput.onkeyup = function() {createTable(); drawGraph();};
 hIvInput.onkeyup = function() {createTable(); drawGraph();};
 hDvInput.onkeyup = function() {createTable(); drawGraph();};
 hIvUnitsInput.onkeyup = function() {createTable(); drawGraph();};

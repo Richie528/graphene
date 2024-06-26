@@ -46,20 +46,6 @@ body {
     border: 1px solid var(--c-surface);
 }
 
-.iv-dv-inputs {
-    position: absolute;
-    top: 0;
-    left: 10px;
-}
-
-.container-row {
-    display: flex;
-}
-
-.container-row > * {
-    margin-right: 5px;
-}
-
 .input {
     display: flex;
     flex-direction: column;
@@ -91,6 +77,26 @@ body {
   
 .input input:focus {
     outline: none;
+}
+
+.graph-title-input {
+    position: absolute;
+    top: 0;
+    left: 10px;
+}
+
+.iv-dv-inputs {
+    position: absolute;
+    top: 57px;
+    left: 10px;
+}
+
+.container-row {
+    display: flex;
+}
+
+.container-row > * {
+    margin-right: 5px;
 }
 
 .table-layout-input {
@@ -146,29 +152,58 @@ body {
     outline: none;
 }
 
+.style-input {
+    position: absolute;
+    top: 15px;
+    left: 332px;
+
+    width: 145px;
+    height: 723px;
+    border-radius: 5px;
+
+    border: 1px solid var(--c-lowlight);
+}
+
 .graph {
     position: absolute;
-    top: 17px;
+    top: 15px;
     right: 10px;
 
     width: 1000px;
     height: 723px;
     border-radius: 5px;
 
-    border: 1px solid var(--c-lowlight)
+    border: 1px solid var(--c-lowlight);
 }
 
 .graph canvas {
     margin: 10px;
-    border: 1px solid blue;
+}
+
+.graph-title {
+    position: absolute;
+    top: 80px;
+    left: 0;
+    width: 980px;
+
+    text-align: center;
+    font-size: 25px;
 }
 
 .equation {
-
+    position: absolute;
+    top: 120px;
+    left: 130px;
+    font-size: 15px;
+    font-weight: bold;
 }
 
 .r-squared {
-    
+    position: absolute;
+    top: 140px;
+    left: 130px;
+    font-size: 14px;
+    font-style: italic;
 }
 
 .y-axis-label {
