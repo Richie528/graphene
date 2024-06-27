@@ -317,13 +317,17 @@ function drawPoints() {
             for (let j = 0; j < numberOfTrials; j++) {
                 let y = 600 - data[i][1][j] * yScale;
                 hContext.fillStyle = graphColours[j];
-                hContext.fillRect(x - 2, y - 2, 4, 4);
+                hContext.beginPath();
+                hContext.arc(x, y, 3, 0, 2 * Math.PI);
+                hContext.fill();
             }
         }
         if (sAverage) {
             let y = 600 - data[i][2] * yScale;
             hContext.fillStyle = "#4287f5";
-            hContext.fillRect(x - 2, y - 2, 4, 4);
+            hContext.beginPath();
+            hContext.arc(x, y, 3, 0, 2 * Math.PI);
+            hContext.fill();
         }
     }
 }
