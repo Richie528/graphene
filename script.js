@@ -1,4 +1,4 @@
-let graphColours = ["#4287f5", "#df8e1d", "#9c42f5", "#40a02b", "#e64553", "#1f4694"];
+let graphColours = ["#4287f5"];
 let yummyNumbers = [1, 2, 3, 4, 5, 6, 8, 10, 12, 15, 20, 25, 50, 75, 100, 150, 200, 250, 300, 500, 1000];
 
 // input elements
@@ -94,6 +94,7 @@ function readSettings() {
 
 function readColours() {
     let hColourInputs = hColourInput.getElementsByTagName("input");
+    if (hColourInputs.length === 1) return;
     graphColours = [];
     graphColours.push(hColourInputs[0].value);
     for (let i = 0; i < numberOfTrials; i++) {
@@ -111,7 +112,27 @@ function createColourInputs() {
         <input type="color">
         `;
     hColourInput.appendChild(averageColourInput);
+    for (let i = 1; i <= numberOfTrials; i++) {
+        let colourInput = document.createElement("div");
+        colourInput.classList.add("colour");
+        colourInput.innerHTML = 
+        `
+        <label for="input" class="text">Trial `+ i.toString() +`:</label>
+        <input type="color">
+        `;
+        hColourInput.appendChild(colourInput);
+    }
+    let hColourInputs = hColourInput.getElementsByTagName("input");
+    for (let i = 0; i < hColourInputs.length; i++) {
+        if (i < graphColours.length) hColourInputs[i].value = graphColours[i];
+        else hColourInputs[i].value = randomColour();
 
+        hColourInputs[i].addEventListener("change", function() {
+            createTable();
+            drawGraph();
+        });
+    }
+    readColours();
 }
 
 function createTable() {
@@ -219,6 +240,7 @@ function readTable() {
     readInput();
     getTableInputs();
     hAverages = hInputTable.querySelectorAll(".avg");
+    if (numberOfTrials === 0 || numberOfVariables === 0) return;
     data = [];
     for (let i = 0; i < numberOfVariables; i++) {
         row = [0, [], 0];
@@ -382,12 +404,14 @@ function drawTrendline() {
 }
 
 function drawEquation() {
-    if (sEquation) hEquation.textContent = "y = " + gradient.toString() + "x + " + intercept.toString();
+    if (sEquation) hEquation.textContent = 
+    "y = " + (Math.round(gradient * 1000) / 1000).toString() + 
+    "x + " + (Math.round(intercept * 1000) / 1000).toString();
     else hEquation.textContent = "";
 }
 
 function drawRSquared() {
-    if (sRSquared) hRSquared.textContent = "R² = " + rSquared.toString();
+    if (sRSquared) hRSquared.textContent = "R² = " + (Math.round(rSquared * 1000) / 1000).toString();
     else hRSquared.textContent = "";
 }
 
@@ -412,21 +436,18 @@ let inputs = document.getElementsByTagName("input");
 for (let element of inputs) {
     element.addEventListener("change", function() {
         createTable();
+        createColourInputs();
         drawGraph();
     });
 }
 for (let element of inputs) {
     element.addEventListener("input", function() {
         createTable();
+        createColourInputs();
         drawGraph();
-    })
+    });
 }
 
 readInput();
+createColourInputs();
 createTable();
-
-console.log(randomColour());
-console.log(randomColour());
-console.log(randomColour());
-console.log(randomColour());
-console.log(randomColour());
