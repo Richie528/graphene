@@ -14,6 +14,7 @@ let hTableInputs = hInputTable.getElementsByTagName("input");
 let hAverages = hInputTable.querySelectorAll(".avg");
 // style settings
 let hSGraphTitle = document.getElementById("show-graph-title");
+let hSAxisLabels = document.getElementById("show-axis-labels");
 let hSAverage = document.getElementById("show-average");
 let hSNonAverage = document.getElementById("show-non-average");
 let hSTrendline = document.getElementById("show-trendline");
@@ -50,6 +51,7 @@ let intercept = 0;
 let rSquared = 0;
 // style settings
 let sGraphTitle = true;
+let sAxisLabels = true;
 let sAverage = true;
 let sNonAverage = true;
 let sTrendline = true;
@@ -72,6 +74,7 @@ function readInput() {
 
 function readSettings() {
     sGraphTitle = hSGraphTitle.checked;
+    sAxisLabels = hSAxisLabels.checked;
     sAverage = hSAverage.checked;
     sNonAverage = hSNonAverage.checked;
     sTrendline = hSTrendline.checked;
@@ -279,8 +282,13 @@ function drawAxes() {
     hContext.moveTo(100, 100); hContext.lineTo(100, 600); hContext.stroke();
     hContext.lineTo(880, 600); hContext.stroke();
     // create axis labels
-    hXAxisLabel.textContent = independentVariable + " (" + ivUnits + ")";
-    hYAxisLabel.textContent = dependentVariable + " (" + dvUnits + ")";
+    if (sAxisLabels) {
+        hXAxisLabel.textContent = independentVariable + " (" + ivUnits + ")";
+        hYAxisLabel.textContent = dependentVariable + " (" + dvUnits + ")";
+    } else {
+        hXAxisLabel.textContent = "";
+        hYAxisLabel.textContent = "";
+    }
     // scale labels
     xScaleLabels = document.querySelectorAll(".x-axis-scale-label");
     yScaleLabels = document.querySelectorAll(".y-axis-scale-label");
@@ -372,6 +380,7 @@ hIvInput.onkeyup = hDvInput.onkeyup =
 hIvUnitsInput.onkeyup = hDvUnitsInput.onkeyup =
 hNumberOfVariables.onkeyup = hNumberOfTrials.onkeyup = 
 hSGraphTitle.onclick = 
+hSAxisLabels.onclick = 
 hSAverage.onclick = 
 hSNonAverage.onclick =
 hSTrendline.onclick = 
