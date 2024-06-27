@@ -1,4 +1,4 @@
-let graphColours = ["#df8e1d", "#9c42f5", "#40a02b", "#e64553", "#1f4694"];
+let graphColours = ["#4287f5", "#df8e1d", "#9c42f5", "#40a02b", "#e64553", "#1f4694"];
 let yummyNumbers = [1, 2, 3, 4, 5, 6, 8, 10, 12, 15, 20, 25, 50, 75, 100, 150, 200, 250, 300, 500, 1000];
 
 // input elements
@@ -12,6 +12,7 @@ let hNumberOfTrials = document.getElementById("no-trials");
 let hInputTable = document.querySelector(".table");
 let hTableInputs = hInputTable.getElementsByTagName("input");
 let hAverages = hInputTable.querySelectorAll(".avg");
+let hColourInput = document.querySelector(".colour-input");
 // style settings
 let hSGraphTitle = document.getElementById("show-graph-title");
 let hSAxisLabels = document.getElementById("show-axis-labels");
@@ -60,6 +61,15 @@ let sRSquared = true;
 
 let data = []
 
+function randomColour() {
+    let s = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"];
+    let colour = "#";
+    for (let i = 0; i < 6; i++) {
+        colour += s[Math.floor(Math.random() * s.length)];
+    }
+    return colour;
+}
+
 function readInput() {
     graphTitle = hGraphTitleInput.value;
     independentVariable = hIvInput.value;
@@ -80,6 +90,28 @@ function readSettings() {
     sTrendline = hSTrendline.checked;
     sEquation = hSEquation.checked;
     sRSquared = hSRSquared.checked;
+}
+
+function readColours() {
+    let hColourInputs = hColourInput.getElementsByTagName("input");
+    graphColours = [];
+    graphColours.push(hColourInputs[0].value);
+    for (let i = 0; i < numberOfTrials; i++) {
+        graphColours.push(hColourInputs[i + 1].value);
+    }
+}
+
+function createColourInputs() {
+    hColourInput.innerHTML = ``;
+    let averageColourInput = document.createElement("div");
+    averageColourInput.classList.add("colour");
+    averageColourInput.innerHTML = 
+        `
+        <label for="input" class="text">Average:</label>
+        <input type="color">
+        `;
+    hColourInput.appendChild(averageColourInput);
+
 }
 
 function createTable() {
@@ -324,7 +356,7 @@ function drawPoints() {
         if (sNonAverage) {
             for (let j = 0; j < numberOfTrials; j++) {
                 let y = 600 - data[i][1][j] * yScale;
-                hContext.fillStyle = graphColours[j];
+                hContext.fillStyle = graphColours[j + 1];
                 hContext.beginPath();
                 hContext.arc(x, y, 3, 0, 2 * Math.PI);
                 hContext.fill();
@@ -332,7 +364,7 @@ function drawPoints() {
         }
         if (sAverage) {
             let y = 600 - data[i][2] * yScale;
-            hContext.fillStyle = "#4287f5";
+            hContext.fillStyle = graphColours[0];
             hContext.beginPath();
             hContext.arc(x, y, 3, 0, 2 * Math.PI);
             hContext.fill();
@@ -342,7 +374,7 @@ function drawPoints() {
 
 function drawTrendline() {
     if (sTrendline) {
-        hContext.strokeStyle = "#4287f5";
+        hContext.strokeStyle = graphColours[0];
         hContext.moveTo(100 + xRange[0] * xScale, 600 - (gradient * xRange[0] + intercept) * yScale);
         hContext.lineTo(100 + xRange[1] * xScale, 600 - (gradient * xRange[1] + intercept) * yScale);
         hContext.stroke();
@@ -362,6 +394,7 @@ function drawRSquared() {
 function drawGraph() {
     readInput();
     readSettings();
+    readColours();
     readTable();
     calculateScale();
     calculateTrendline();
@@ -375,21 +408,25 @@ function drawGraph() {
     drawRSquared();
 }
 
-hGraphTitleInput.onkeyup = 
-hIvInput.onkeyup = hDvInput.onkeyup = 
-hIvUnitsInput.onkeyup = hDvUnitsInput.onkeyup =
-hNumberOfVariables.onkeyup = hNumberOfTrials.onkeyup = 
-hSGraphTitle.onclick = 
-hSAxisLabels.onclick = 
-hSAverage.onclick = 
-hSNonAverage.onclick =
-hSTrendline.onclick = 
-hSEquation.onclick = 
-hSRSquared.onclick = 
-function() { 
-    createTable(); 
-    drawGraph();
-};
+let inputs = document.getElementsByTagName("input");
+for (let element of inputs) {
+    element.addEventListener("change", function() {
+        createTable();
+        drawGraph();
+    });
+}
+for (let element of inputs) {
+    element.addEventListener("input", function() {
+        createTable();
+        drawGraph();
+    })
+}
 
 readInput();
 createTable();
+
+console.log(randomColour());
+console.log(randomColour());
+console.log(randomColour());
+console.log(randomColour());
+console.log(randomColour());
