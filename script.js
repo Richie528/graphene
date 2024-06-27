@@ -269,7 +269,8 @@ function clearCanvas() {
 }
 
 function drawTitle() {
-    hGraphTitle.textContent = graphTitle;
+    if (sGraphTitle) hGraphTitle.textContent = graphTitle;
+    else hGraphTitle.textContent = "";
 }
 
 function drawAxes() {
@@ -312,40 +313,48 @@ function drawAxes() {
 function drawPoints() {
     for (let i = 0; i < numberOfVariables; i++) {
         let x = 100 + data[i][0] * xScale;
-        for (let j = 0; j < numberOfTrials; j++) {
-            let y = 600 - data[i][1][j] * yScale;
-            hContext.fillStyle = graphColours[j];
+        if (sNonAverage) {
+            for (let j = 0; j < numberOfTrials; j++) {
+                let y = 600 - data[i][1][j] * yScale;
+                hContext.fillStyle = graphColours[j];
+                hContext.fillRect(x - 2, y - 2, 4, 4);
+            }
+        }
+        if (sAverage) {
+            let y = 600 - data[i][2] * yScale;
+            hContext.fillStyle = "#4287f5";
             hContext.fillRect(x - 2, y - 2, 4, 4);
         }
-        let y = 600 - data[i][2] * yScale;
-        hContext.fillStyle = "#4287f5";
-        hContext.fillRect(x - 2, y - 2, 4, 4);
     }
 }
 
 function drawTrendline() {
-    hContext.strokeStyle = "#4287f5";
-    hContext.moveTo(100 + xRange[0] * xScale, 600 - (gradient * xRange[0] + intercept) * yScale);
-    hContext.lineTo(100 + xRange[1] * xScale, 600 - (gradient * xRange[1] + intercept) * yScale);
-    hContext.stroke();
+    if (sTrendline) {
+        hContext.strokeStyle = "#4287f5";
+        hContext.moveTo(100 + xRange[0] * xScale, 600 - (gradient * xRange[0] + intercept) * yScale);
+        hContext.lineTo(100 + xRange[1] * xScale, 600 - (gradient * xRange[1] + intercept) * yScale);
+        hContext.stroke();
+    }
 }
 
 function drawEquation() {
-    hEquation.textContent = "y = " + gradient.toString() + "x + " + intercept.toString();
+    if (sEquation) hEquation.textContent = "y = " + gradient.toString() + "x + " + intercept.toString();
+    else hEquation.textContent = "";
 }
 
 function drawRSquared() {
-    hRSquared.textContent = "R² = " + rSquared.toString();
+    if (sRSquared) hRSquared.textContent = "R² = " + rSquared.toString();
+    else hRSquared.textContent = "";
 }
 
 function drawGraph() {
     readInput();
     readSettings();
     readTable();
-    clearCanvas();
     calculateScale();
     calculateTrendline();
     calculateRSquared();
+    clearCanvas();
     drawTitle();
     drawAxes();
     drawPoints();
@@ -355,12 +364,9 @@ function drawGraph() {
 }
 
 hGraphTitleInput.onkeyup = 
-hIvInput.onkeyup = 
-hDvInput.onkeyup = 
-hIvUnitsInput.onkeyup =
-hDvUnitsInput.onkeyup =
-hNumberOfVariables.onkeyup = 
-hNumberOfTrials.onkeyup = 
+hIvInput.onkeyup = hDvInput.onkeyup = 
+hIvUnitsInput.onkeyup = hDvUnitsInput.onkeyup =
+hNumberOfVariables.onkeyup = hNumberOfTrials.onkeyup = 
 hSGraphTitle.onclick = 
 hSAverage.onclick = 
 hSNonAverage.onclick =
